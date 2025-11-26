@@ -1,0 +1,19 @@
+:host ::ng-deep .p-dialog .product-image {
+    width: 150px;
+    margin: 0 auto 2rem auto;
+    display: block;
+}
+
+.field {
+    margin-bottom: 1rem;
+}
+
+.formgrid.grid {
+    margin-top: 0;
+}
+
+.field > label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}

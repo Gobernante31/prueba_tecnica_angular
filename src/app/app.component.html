@@ -1,1 +1,30 @@
-<router-outlet />
+<div class="min-h-screen flex flex-column bg-gray-50">
+  <!-- Minimalist Header -->
+  <div
+    class="surface-card px-4 py-3 flex justify-content-between align-items-center sticky top-0 z-5 border-bottom-1 surface-border">
+    <div class="flex align-items-center gap-3 cursor-pointer" routerLink="/">
+      <div
+        class="bg-primary-900 text-white border-round-md p-2 flex align-items-center justify-content-center shadow-1">
+        <i class="pi pi-box text-xl"></i>
+      </div>
+      <span class="font-bold text-xl text-900 tracking-tight">Garantías App</span>
+    </div>
+
+    <!-- Navigation Pills -->
+    <div class="flex gap-2 bg-surface-100 p-1 border-round-2xl">
+      <button pButton pRipple label="Dashboard" icon="pi pi-home"
+        class="p-button-rounded p-button-text p-button-sm text-600 hover:surface-card hover:text-900 transition-all transition-duration-200"
+        routerLink="/dashboard" routerLinkActive="bg-white text-primary shadow-1 font-semibold"></button>
+      <button pButton pRipple label="Entidades" icon="pi pi-building"
+        class="p-button-rounded p-button-text p-button-sm text-600 hover:surface-card hover:text-900 transition-all transition-duration-200"
+        routerLink="/entidades" routerLinkActive="bg-white text-primary shadow-1 font-semibold"></button>
+      <button pButton pRipple label="Contactos" icon="pi pi-users"
+        class="p-button-rounded p-button-text p-button-sm text-600 hover:surface-card hover:text-900 transition-all transition-duration-200"
+        routerLink="/contactos" routerLinkActive="bg-white text-primary shadow-1 font-semibold"></button>
+    </div>
+  </div>
+
+  <div class="layout-container flex-grow-1 w-full mt-4">
+    <router-outlet></router-outlet>
+  </div>
+</div>

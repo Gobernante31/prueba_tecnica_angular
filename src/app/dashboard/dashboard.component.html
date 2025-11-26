@@ -1,0 +1,141 @@
+<div class="grid">
+  <!-- Minimalist Hero -->
+  <div class="col-12 mb-2">
+    <div class="flex flex-column md:flex-row align-items-center justify-content-between">
+      <div>
+        <div class="text-2xl font-bold text-900 mb-1">Bienvenido</div>
+        <div class="text-500 text-sm">Resumen de actividad reciente</div>
+      </div>
+      <div class="flex gap-2 mt-3 md:mt-0">
+        <button pButton pRipple label="Entidad" icon="pi pi-plus"
+          class="p-button-sm p-button-outlined p-button-secondary" routerLink="/entidades"></button>
+        <button pButton pRipple label="Contacto" icon="pi pi-user-plus" class="p-button-sm p-button-primary"
+          routerLink="/contactos"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Minimal Stats Cards -->
+  <div class="col-12 md:col-6 lg:col-3">
+    <div class="surface-card p-3 h-full flex flex-column justify-content-between">
+      <div class="flex justify-content-between mb-2">
+        <span class="text-500 font-medium text-sm">Entidades</span>
+        <i class="pi pi-building text-500"></i>
+      </div>
+      <div>
+        <div class="text-900 font-bold text-2xl">{{totalEntidades()}}</div>
+        <div class="text-green-500 font-medium text-xs mt-1">
+          <i class="pi pi-arrow-up text-xs"></i> Activas
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 md:col-6 lg:col-3">
+    <div class="surface-card p-3 h-full flex flex-column justify-content-between">
+      <div class="flex justify-content-between mb-2">
+        <span class="text-500 font-medium text-sm">Contactos</span>
+        <i class="pi pi-users text-500"></i>
+      </div>
+      <div>
+        <div class="text-900 font-bold text-2xl">{{totalContactos()}}</div>
+        <div class="text-green-500 font-medium text-xs mt-1">
+          <i class="pi pi-check text-xs"></i> Verificados
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 md:col-6 lg:col-3">
+    <div
+      class="surface-card p-3 h-full flex flex-column justify-content-between cursor-pointer hover:surface-hover transition-duration-200"
+      routerLink="/entidades">
+      <div class="flex justify-content-between mb-2">
+        <span class="text-500 font-medium text-sm">Gestión Entidades</span>
+        <i class="pi pi-arrow-right text-500"></i>
+      </div>
+      <div class="text-900 font-medium text-sm mt-2">Ir al módulo</div>
+    </div>
+  </div>
+
+  <div class="col-12 md:col-6 lg:col-3">
+    <div
+      class="surface-card p-3 h-full flex flex-column justify-content-between cursor-pointer hover:surface-hover transition-duration-200"
+      routerLink="/contactos">
+      <div class="flex justify-content-between mb-2">
+        <span class="text-500 font-medium text-sm">Gestión Contactos</span>
+        <i class="pi pi-arrow-right text-500"></i>
+      </div>
+      <div class="text-900 font-medium text-sm mt-2">Ir al módulo</div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="col-12 lg:col-8">
+    <div class="surface-card p-0 h-full">
+      <div class="flex align-items-center justify-content-between p-3 border-bottom-1 surface-border">
+        <h5 class="m-0 text-900 text-base font-semibold">Entidades Recientes</h5>
+        <button pButton pRipple icon="pi pi-arrow-right" class="p-button-text p-button-secondary p-button-sm"
+          routerLink="/entidades"></button>
+      </div>
+
+      <p-table [value]="recentEntidades()" [tableStyle]="{'min-width': '30rem'}" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Nombre</th>
+            <th>NIT</th>
+            <th>Email</th>
+            <th style="width: 3rem"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-entidad>
+          <tr>
+            <td class="font-medium text-900">{{entidad.nombre}}</td>
+            <td class="text-500 font-mono text-sm">{{entidad.nit}}</td>
+            <td class="text-500 text-sm">{{entidad.email}}</td>
+            <td>
+              <button pButton pRipple icon="pi pi-angle-right" class="p-button-text p-button-secondary p-button-sm"
+                routerLink="/entidades"></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center p-4 text-500 text-sm">No hay registros recientes.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <div class="col-12 lg:col-4">
+    <div class="surface-card p-3 h-full">
+      <div class="mb-3">
+        <h5 class="m-0 text-900 text-base font-semibold">Estado del Sistema</h5>
+      </div>
+      <div class="flex flex-column gap-2">
+        <div class="p-2 border-1 surface-border border-round flex align-items-center gap-3">
+          <i class="pi pi-check-circle text-green-500"></i>
+          <div>
+            <div class="text-900 font-medium text-sm">Servicios Operativos</div>
+            <div class="text-xs text-500">Todo funcionando correctamente</div>
+          </div>
+        </div>
+        <div class="p-2 border-1 surface-border border-round flex align-items-center gap-3">
+          <i class="pi pi-shield text-blue-500"></i>
+          <div>
+            <div class="text-900 font-medium text-sm">Seguridad Activa</div>
+            <div class="text-xs text-500">Conexión cifrada</div>
+          </div>
+        </div>
+        <div class="p-2 border-1 surface-border border-round flex align-items-center gap-3">
+          <i class="pi pi-clock text-orange-500"></i>
+          <div>
+            <div class="text-900 font-medium text-sm">Actualizado</div>
+            <div class="text-xs text-500">Hace un momento</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,132 @@
+<div class="card surface-card p-4 border-round-xl shadow-none">
+  <div class="flex justify-content-between align-items-center mb-4">
+    <div>
+      <h5 class="m-0 text-900 text-xl font-semibold">Contactos</h5>
+      <p class="text-500 text-sm mt-1">Directorio de personas y representantes</p>
+    </div>
+    <div class="flex gap-2">
+      <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-primary p-button-sm"
+        (click)="openNew()"></button>
+      <button pButton pRipple icon="pi pi-trash" class="p-button-danger p-button-outlined p-button-sm"
+        (click)="deleteSelected()" [disabled]="!selectedContactos || !selectedContactos.length"></button>
+    </div>
+  </div>
+
+  <p-table #dt [value]="contactosService.contactos()" [rows]="10" [paginator]="true"
+    [globalFilterFields]="['nombre','identificacion','email']" [(selection)]="selectedContactos" [rowHover]="true"
+    dataKey="id" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}" [showCurrentPageReport]="true"
+    styleClass="p-datatable-sm p-datatable-gridlines-none">
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 3rem">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th pSortableColumn="nombre">Nombre <p-sortIcon field="nombre"></p-sortIcon></th>
+        <th pSortableColumn="identificacion">Identificación <p-sortIcon field="identificacion"></p-sortIcon></th>
+        <th pSortableColumn="entidad">Entidad <p-sortIcon field="entidad"></p-sortIcon></th>
+        <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-contacto>
+      <tr>
+        <td>
+          <p-tableCheckbox [value]="contacto"></p-tableCheckbox>
+        </td>
+        <td><span class="font-medium text-900">{{contacto.nombre}}</span></td>
+        <td><span class="text-500 font-mono text-sm">{{contacto.identificacion}}</span></td>
+        <td>
+          <span class="p-tag p-tag-info bg-blue-50 text-blue-700 border-blue-200" *ngIf="contacto.entidad">
+            {{contacto.entidad.nombre}}
+          </span>
+        </td>
+        <td>{{contacto.email}}</td>
+        <td>
+          <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-sm mr-2"
+            (click)="edit(contacto)"></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="flex align-items-center justify-content-between text-sm text-500">
+        Total: {{contactosService.contactos() ? contactosService.contactos().length : 0 }} contactos.
+      </div>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog [(visible)]="displayDialog" [style]="{width: '450px'}" header="Detalles del Contacto" [modal]="true"
+  styleClass="p-fluid">
+  <ng-template pTemplate="content">
+    <form [formGroup]="contactoForm" class="grid formgrid p-2">
+      <div class="field col-12 mb-3">
+        <label for="entidad" class="font-medium text-900 text-sm mb-1">Entidad *</label>
+        <p-dropdown id="entidad" [options]="entidadesService.entidades()" formControlName="entidad_id"
+          optionLabel="nombre" optionValue="id" placeholder="Seleccione una entidad" [filter]="true" filterBy="nombre"
+          [showClear]="true" appendTo="body" styleClass="p-inputtext-sm"
+          [ngClass]="{'ng-invalid ng-dirty': f['entidad_id'].invalid && (f['entidad_id'].dirty || f['entidad_id'].touched)}">
+        </p-dropdown>
+        <small class="p-error block mt-1"
+          *ngIf="f['entidad_id'].invalid && (f['entidad_id'].dirty || f['entidad_id'].touched)">
+          Requerido
+        </small>
+      </div>
+
+      <div class="field col-12 mb-3">
+        <label for="nombre" class="font-medium text-900 text-sm mb-1">Nombre *</label>
+        <input type="text" pInputText id="nombre" formControlName="nombre" placeholder="Ej. Juan Pérez"
+          class="p-inputtext-sm"
+          [ngClass]="{'ng-invalid ng-dirty': f['nombre'].invalid && (f['nombre'].dirty || f['nombre'].touched)}" />
+        <small class="p-error block mt-1" *ngIf="f['nombre'].invalid && (f['nombre'].dirty || f['nombre'].touched)">
+          Requerido
+        </small>
+      </div>
+
+      <div class="field col-12 md:col-6 mb-3">
+        <label for="identificacion" class="font-medium text-900 text-sm mb-1">Identificación *</label>
+        <input type="text" pInputText id="identificacion" formControlName="identificacion" placeholder="Ej. 12345678"
+          class="p-inputtext-sm"
+          [ngClass]="{'ng-invalid ng-dirty': f['identificacion'].invalid && (f['identificacion'].dirty || f['identificacion'].touched)}" />
+        <small class="p-error block mt-1"
+          *ngIf="f['identificacion'].invalid && (f['identificacion'].dirty || f['identificacion'].touched)">
+          Requerido
+        </small>
+      </div>
+
+      <div class="field col-12 md:col-6 mb-3">
+        <label for="telefono" class="font-medium text-900 text-sm mb-1">Teléfono</label>
+        <input type="text" pInputText id="telefono" formControlName="telefono" placeholder="Ej. 300 123 4567"
+          class="p-inputtext-sm" />
+      </div>
+
+      <div class="field col-12 mb-3">
+        <label for="email" class="font-medium text-900 text-sm mb-1">Email</label>
+        <input type="email" pInputText id="email" formControlName="email" placeholder="juan@ejemplo.com"
+          class="p-inputtext-sm" />
+        <small class="p-error block mt-1" *ngIf="f['email'].errors?.['email']">Email inválido</small>
+      </div>
+
+      <div class="field col-12 mb-3">
+        <label for="direccion" class="font-medium text-900 text-sm mb-1">Dirección</label>
+        <input type="text" pInputText id="direccion" formControlName="direccion" placeholder="Ej. Calle 123 # 45-67"
+          class="p-inputtext-sm" />
+      </div>
+
+      <div class="field col-12 mb-1">
+        <label for="notas" class="font-medium text-900 text-sm mb-1">Notas</label>
+        <textarea pInputTextarea id="notas" formControlName="notas" rows="2" placeholder="Información adicional..."
+          class="p-inputtext-sm"></textarea>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-content-end gap-2 p-2">
+      <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text p-button-sm text-600"
+        (click)="displayDialog = false"></button>
+      <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-primary p-button-sm"
+        (click)="save()"></button>
+    </div>
+  </ng-template>
+</p-dialog>

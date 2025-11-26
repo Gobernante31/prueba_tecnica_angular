@@ -1,126 +1,108 @@
-<!-- @for(entidad of entidadesService.entidades(); track entidad.id){
-    {{entidad.nombre}}
-} -->
-<p-card header="Entidades">
+<div class="card surface-card p-4 border-round-xl shadow-none">
+  <div class="flex justify-content-between align-items-center mb-4">
+    <div>
+      <h5 class="m-0 text-900 text-xl font-semibold">Entidades</h5>
+      <p class="text-500 text-sm mt-1">Gestión de empresas y organizaciones</p>
+    </div>
+    <div class="flex gap-2">
+      <button pButton pRipple label="Nueva" icon="pi pi-plus" class="p-button-primary p-button-sm"
+        (click)="openNew()"></button>
+      <button pButton pRipple icon="pi pi-trash" class="p-button-danger p-button-outlined p-button-sm"
+        (click)="deleteSelected()" [disabled]="!selectedEntidades || !selectedEntidades.length"></button>
+    </div>
+  </div>
 
-    <p-toast />
-    <p-toolbar styleClass="mb-4 gap-2">
-        <ng-template pTemplate="left">
-            <p-button 
-                severity="success" 
-                label="Nueva" 
-                icon="pi pi-plus" 
-                class="mr-2" 
-                (onClick)="openNew()" />
-            <p-button 
-                severity="danger" 
-                label="Eliminar" 
-                icon="pi pi-trash" badge="{{selectedEntidades.length}}" 
-                />
-        </ng-template>
-    
-        <ng-template pTemplate="right">
-        </ng-template>
-    </p-toolbar>
-    <p-table
-        #dt
-        [value]="entidadesService.entidades()"
-        [rows]="10"
-        [paginator]="true"
-        [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
-        [tableStyle]="{ 'min-width': '75rem' }"
-        [rowHover]="true"
-        dataKey="id"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-        [showCurrentPageReport]="true"
-        [loading]="entidadesService.loading()"
-        [(selection)]="selectedEntidades" 
-    >
-        <ng-template pTemplate="caption">
-            <div class="flex align-items-center justify-content-between">
-                <h5 class="m-0">Lista de entidades</h5>
-                <span class="p-input-icon-left">
-                    <i class="pi pi-search"></i>
-                    <input 
-                        pInputText 
-                        type="text" 
-                        class="fietext-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-fullld"
-                        placeholder="Search..." />
-                </span>
-            </div>
-        </ng-template>
-        <ng-template pTemplate="header">
-            <tr>
-                <th style="width: 4rem">
-                    <p-tableHeaderCheckbox />
-                </th>
-                <th pSortableColumn="nombre" style="min-width:15rem">
-                    Nombre <p-sortIcon field="nombre" />
-                </th>
-                <th>
-                    Nit
-                </th>
-                <th pSortableColumn="telefono">
-                    Teléfono <p-sortIcon field="telefono" />
-                </th>
-                <th pSortableColumn="direccion" style="min-width:10rem">
-                    Dirección <p-sortIcon field="direccion" />
-                </th>
-                <th>
-                    Opciones
-                </th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-entidad>
-            <tr>
-                <td>
-                    <p-tableCheckbox [value]="entidad" />
-                </td>
-                <td>
-                    {{ entidad.nombre }}
-                </td>
-                <td>
-                    {{ entidad.nit }}
-                </td>
-                <td>
-                    {{ entidad.telefono }}
-                </td>
-                <td>
-                    {{ entidad.direccion }}
-                </td>
-                <td>
-                    <p-button 
-                     
-                        icon="pi pi-pencil" 
-                        class="mr-2" 
-                        [rounded]="true" 
-                        [outlined]="true" 
-                        severity="success" 
-                        (onClick)="edit(entidad)" />
-                    <p-button 
-                     
-                        icon="pi pi-trash" 
-                        class="mr-2" 
-                        severity="danger" 
-                        [rounded]="true" 
-                        [outlined]="true" 
-                        (onClick)="entidadesService.delete(entidad)" />
-                    <p-button 
-                     
-                        icon="pi pi-users" 
-                        severity="info" 
-                        [rounded]="true" 
-                        [outlined]="true" 
-                        />
+  <p-table #dt [value]="entidadesService.entidades()" [rows]="10" [paginator]="true"
+    [globalFilterFields]="['nombre','nit','email']" [(selection)]="selectedEntidades" [rowHover]="true" dataKey="id"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}" [showCurrentPageReport]="true"
+    styleClass="p-datatable-sm p-datatable-gridlines-none">
 
-                </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="summary">
-            <div class="flex align-items-center justify-content-between">
-                Total {{ total() }} entidades.
-            </div>
-        </ng-template>
-    </p-table>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 3rem">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th pSortableColumn="nombre">Nombre <p-sortIcon field="nombre"></p-sortIcon></th>
+        <th pSortableColumn="nit">NIT <p-sortIcon field="nit"></p-sortIcon></th>
+        <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+        <th>Teléfono</th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-entidad>
+      <tr>
+        <td>
+          <p-tableCheckbox [value]="entidad"></p-tableCheckbox>
+        </td>
+        <td><span class="font-medium text-900">{{entidad.nombre}}</span></td>
+        <td><span class="text-500 font-mono text-sm">{{entidad.nit}}</span></td>
+        <td>{{entidad.email}}</td>
+        <td>{{entidad.telefono}}</td>
+        <td>
+          <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-sm mr-2"
+            (click)="edit(entidad)"></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="flex align-items-center justify-content-between text-sm text-500">
+        Total: {{entidadesService.entidades() ? entidadesService.entidades().length : 0 }} entidades.
+      </div>
+    </ng-template>
+  </p-table>
+</div>
 
-</p-card>
+<p-dialog [(visible)]="displayDialog" [style]="{width: '450px'}" header="Detalles de la Entidad" [modal]="true"
+  styleClass="p-fluid">
+  <ng-template pTemplate="content">
+    <form [formGroup]="entidadForm" class="grid formgrid p-2">
+      <div class="field col-12 mb-3">
+        <label for="nombre" class="font-medium text-900 text-sm mb-1">Nombre *</label>
+        <input type="text" pInputText id="nombre" formControlName="nombre" placeholder="Ej. Empresa SAS"
+          class="p-inputtext-sm"
+          [ngClass]="{'ng-invalid ng-dirty': f['nombre'].invalid && (f['nombre'].dirty || f['nombre'].touched)}" />
+        <small class="p-error block mt-1" *ngIf="f['nombre'].invalid && (f['nombre'].dirty || f['nombre'].touched)">
+          Requerido
+        </small>
+      </div>
+
+      <div class="field col-12 md:col-6 mb-3">
+        <label for="nit" class="font-medium text-900 text-sm mb-1">NIT *</label>
+        <input type="text" pInputText id="nit" formControlName="nit" placeholder="Ej. 900.123.456-7"
+          class="p-inputtext-sm"
+          [ngClass]="{'ng-invalid ng-dirty': f['nit'].invalid && (f['nit'].dirty || f['nit'].touched)}" />
+        <small class="p-error block mt-1" *ngIf="f['nit'].invalid && (f['nit'].dirty || f['nit'].touched)">
+          Requerido
+        </small>
+      </div>
+
+      <div class="field col-12 md:col-6 mb-3">
+        <label for="telefono" class="font-medium text-900 text-sm mb-1">Teléfono</label>
+        <input type="text" pInputText id="telefono" formControlName="telefono" placeholder="Ej. 300 123 4567"
+          class="p-inputtext-sm" />
+      </div>
+
+      <div class="field col-12 mb-3">
+        <label for="email" class="font-medium text-900 text-sm mb-1">Email</label>
+        <input type="email" pInputText id="email" formControlName="email" placeholder="contacto@empresa.com"
+          class="p-inputtext-sm" />
+        <small class="p-error block mt-1" *ngIf="f['email'].errors?.['email']">Email inválido</small>
+      </div>
+
+      <div class="field col-12 mb-1">
+        <label for="direccion" class="font-medium text-900 text-sm mb-1">Dirección</label>
+        <input type="text" pInputText id="direccion" formControlName="direccion" placeholder="Ej. Calle 123 # 45-67"
+          class="p-inputtext-sm" />
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-content-end gap-2 p-2">
+      <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text p-button-sm text-600"
+        (click)="displayDialog = false"></button>
+      <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-primary p-button-sm"
+        (click)="save()"></button>
+    </div>
+  </ng-template>
+</p-dialog>

@@ -1,27 +1,27 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { MessageService } from 'primeng/api';
-import { environment } from '../../../environments/environment.development';
-import { StateEntidad } from '../interfaces/state-entidad';
-import { Entidad } from '../interfaces/entidad';
-import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment.development';
+import { Contacto } from '../interfaces/contacto';
+import { StateContacto } from '../interfaces/state-contacto';
 
 @Injectable({
   providedIn: 'root',
 })
-export class EntidadesService {
+export class ContactosService {
   private http = inject(HttpClient);
   private messageService = inject(MessageService);
 
   url: string = environment.apiUrl;
 
-  #state = signal<StateEntidad>({
+  #state = signal<StateContacto>({
     loading: true,
-    entidades: [],
+    contactos: [],
   });
 
-  entidades = computed(() => this.#state().entidades);
+  contactos = computed(() => this.#state().contactos);
   loading = computed(() => this.#state().loading);
 
   constructor() {
@@ -29,48 +29,53 @@ export class EntidadesService {
   }
 
   refresh(): void {
-    this.#state.set({ loading: true, entidades: [] });
+    this.#state.set({ loading: true, contactos: [] });
     this.http
-      .get<Entidad[]>(`${this.url}entidades`)
+      .get<Contacto[]>(`${this.url}contactos`)
       .pipe(
-        tap((res: Entidad[]) => {
+        tap((res: Contacto[]) => {
           this.#state.set({
             loading: false,
-            entidades: res,
+            contactos: res,
           });
         }),
         catchError((error: any) => {
-          console.error('Error al cargar entidades:', error);
+          console.error('Error al cargar contactos:', error);
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'No se pudieron cargar las entidades',
+            detail: 'No se pudieron cargar los contactos',
           });
-          this.#state.set({ loading: false, entidades: [] });
+          this.#state.set({ loading: false, contactos: [] });
           return of([]);
         })
       )
       .subscribe();
   }
 
-  create(entidad: Partial<Entidad>): void {
+  create(contacto: Partial<Contacto>): void {
     this.http
-      .post<Entidad>(`${this.url}entidades`, entidad)
+      .post<Contacto>(`${this.url}contactos`, contacto)
       .pipe(
         tap(() => {
           this.messageService.add({
             severity: 'success',
             summary: 'Éxito',
-            detail: 'Entidad creada correctamente',
+            detail: 'Contacto creado correctamente',
           });
           this.refresh();
         }),
         catchError((error: any) => {
-          console.error('Error al crear entidad:', error);
+          console.error('Error al crear contacto:', error);
+          // Manejo específico para errores de validación del backend (ej. duplicados)
+          const errorMsg =
+            error.error?.error ||
+            error.error?.message ||
+            'No se pudo crear el contacto';
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: error.error?.message || 'No se pudo crear la entidad',
+            detail: errorMsg,
           });
           return of(null);
         })
@@ -78,24 +83,28 @@ export class EntidadesService {
       .subscribe();
   }
 
-  update(id: number, entidad: Partial<Entidad>): void {
+  update(id: number, contacto: Partial<Contacto>): void {
     this.http
-      .put<Entidad>(`${this.url}entidades/${id}`, entidad)
+      .put<Contacto>(`${this.url}contactos/${id}`, contacto)
       .pipe(
         tap(() => {
           this.messageService.add({
             severity: 'success',
             summary: 'Éxito',
-            detail: 'Entidad actualizada correctamente',
+            detail: 'Contacto actualizado correctamente',
           });
           this.refresh();
         }),
         catchError((error: any) => {
-          console.error('Error al actualizar entidad:', error);
+          console.error('Error al actualizar contacto:', error);
+          const errorMsg =
+            error.error?.error ||
+            error.error?.message ||
+            'No se pudo actualizar el contacto';
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: error.error?.message || 'No se pudo actualizar la entidad',
+            detail: errorMsg,
           });
           return of(null);
         })
@@ -103,24 +112,24 @@ export class EntidadesService {
       .subscribe();
   }
 
-  delete(entidad: Entidad): void {
+  delete(contacto: Contacto): void {
     this.http
-      .delete<any>(`${this.url}entidades/${entidad.id}`)
+      .delete<any>(`${this.url}contactos/${contacto.id}`)
       .pipe(
         tap(() => {
           this.messageService.add({
             severity: 'success',
             summary: 'Éxito',
-            detail: 'Entidad eliminada correctamente',
+            detail: 'Contacto eliminado correctamente',
           });
           this.refresh();
         }),
         catchError((error: any) => {
-          console.error('Error al eliminar entidad:', error);
+          console.error('Error al eliminar contacto:', error);
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: error.error?.message || 'No se pudo eliminar la entidad',
+            detail: error.error?.message || 'No se pudo eliminar el contacto',
           });
           return of(null);
         })
@@ -128,13 +137,13 @@ export class EntidadesService {
       .subscribe();
   }
 
-  deleteMultiple(entidades: Entidad[]): void {
+  deleteMultiple(contactos: Contacto[]): void {
     let completed = 0;
-    const total = entidades.length;
+    const total = contactos.length;
 
-    entidades.forEach((entidad) => {
+    contactos.forEach((contacto) => {
       this.http
-        .delete<any>(`${this.url}entidades/${entidad.id}`)
+        .delete<any>(`${this.url}contactos/${contacto.id}`)
         .pipe(
           tap(() => {
             completed++;
@@ -142,13 +151,13 @@ export class EntidadesService {
               this.messageService.add({
                 severity: 'success',
                 summary: 'Éxito',
-                detail: `${total} entidad(es) eliminada(s) correctamente`,
+                detail: `${total} contacto(s) eliminado(s) correctamente`,
               });
               this.refresh();
             }
           }),
           catchError((error: any) => {
-            console.error('Error al eliminar entidad:', error);
+            console.error('Error al eliminar contacto:', error);
             completed++;
             if (completed === total) {
               this.refresh();
